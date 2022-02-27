@@ -1,0 +1,7 @@
+<form [formGroup]="registrationForm">
+    <input formControlName="username" placeholder="Username" />
+    <input formControlName="password" placeholder="Password" type="password" />
+    <input formControlName="passwordAgain" placeholder="Password again" type="password" />
+    <button (click)="onBack()">Back</button>
+    <button (click)="onRegister()">Register</button>
+</form>

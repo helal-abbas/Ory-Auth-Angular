@@ -1,0 +1,6 @@
+<form [formGroup]="loginForm">
+    <input formControlName="username" placeholder="Username" />
+    <input formControlName="password" placeholder="Password" type="password" />
+    <button (click)="onLogin()">Login</button>
+    <button (click)="onRegister()">Register</button>
+</form>
