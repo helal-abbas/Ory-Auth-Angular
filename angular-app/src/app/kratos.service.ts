@@ -8,8 +8,11 @@ import { environment } from './../environments/environment';
 })
 export class KratosService {
   protected ory: V0alpha2Api;
+
   protected loginFlow!: SelfServiceLoginFlow;
   protected registrationFlow!: SelfServiceRegistrationFlow;
+
+  protected sessionToken!: string;
 
   constructor(
     protected httpClient: HttpClient,
@@ -34,10 +37,9 @@ export class KratosService {
 
   public async initRegistrationFlow(): Promise<void> {
     this.registrationFlow = (await this.ory.initializeSelfServiceRegistrationFlowForBrowsers(undefined)).data;
-    console.log(this.registrationFlow);
   }
 
-  public async doLogin(passwordIdentifier: string, password: string): Promise<void> {
+  public async login(passwordIdentifier: string, password: string): Promise<boolean> {
     const body: any = {};
 
     for (const node of this.loginFlow.ui.nodes as any[]) {
@@ -50,14 +52,16 @@ export class KratosService {
       }
     }
 
-    console.log(await this.ory.submitSelfServiceLoginFlow(
+    const response = await this.ory.submitSelfServiceLoginFlow(
       this.loginFlow.id,
       undefined,
       body
-    ));
+    );
+
+    return response.status === 200;;
   }
 
-  public async doRegistration(passwordIdentifier: string, password: string): Promise<void> {
+  public async registration(passwordIdentifier: string, password: string): Promise<boolean> {
     const body: any = {};
 
     for (const node of this.registrationFlow.ui.nodes as any[]) {
@@ -70,9 +74,30 @@ export class KratosService {
       }
     }
 
-    console.log(await this.ory.submitSelfServiceRegistrationFlow(
+    const response = await this.ory.submitSelfServiceRegistrationFlow(
       this.registrationFlow.id,
       body,
-    ));
+    );
+
+    return response.status === 200;
+  }
+
+  public async logout(): Promise<boolean> {
+    const logoutFlowResponse = await this.ory.createSelfServiceLogoutFlowUrlForBrowsers();
+    const logoutResponse = await this.ory.submitSelfServiceLogoutFlow(logoutFlowResponse.data.logout_token);
+    return logoutResponse.status === 204;
+  }
+
+  public async hasSession(): Promise<boolean> {
+    try {
+      const response = await this.ory.toSession();
+      this.sessionToken = response.data.identity.id;
+      const hasSession = response.status === 200 && !!response.data.active;
+
+      console.log(hasSession);
+      return hasSession;
+    } catch (err) {
+      return false;
+    }
   }
 }

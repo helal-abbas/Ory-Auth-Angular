@@ -31,7 +31,9 @@ export class RegistrationComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  onRegister(): void {
-    this.kratos.doRegistration(this.registrationForm.value.username, this.registrationForm.value.password);
+  async onRegister(): Promise<void> {
+    if (await this.kratos.registration(this.registrationForm.value.username, this.registrationForm.value.password)) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { KratosService } from './../kratos.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  constructor(
+    protected kratos: KratosService,
+    protected router: Router,
+  ) { }
 
   ngOnInit(): void {
+  }
+
+  async onLogout(): Promise<void> {
+    if (await this.kratos.logout()) {
+      this.router.navigate(['/login']);
+    }
   }
 
 }

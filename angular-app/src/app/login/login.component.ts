@@ -26,9 +26,16 @@ export class LoginComponent implements OnInit {
     this.kratos.initLoginFlow();
   }
 
-  onLogin(): void {
+  async onLogin(): Promise<void> {
     const formValue = this.loginForm.getRawValue();
-    this.kratos.doLogin(formValue.username, formValue.password);
+    if (await this.kratos.login(formValue.username, formValue.password)) {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.loginForm.setValue({
+        username: '',
+        password: '',
+      });
+    }
   }
 
   onRegister(): void {
