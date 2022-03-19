@@ -1,5 +1,5 @@
 # ory-kratos-angular-spa
-its just a POC.
+its just a POC with registration and login.
 
 
 Start backend part via
@@ -13,3 +13,7 @@ cd angular-app/
 npm i
 ng serve
 ```
+
+### Credits
+- [ory kratos](https://www.ory.sh/docs/kratos/quickstart)
+- [Thomas](https://github.com/TMInnovations/testorykratos)
