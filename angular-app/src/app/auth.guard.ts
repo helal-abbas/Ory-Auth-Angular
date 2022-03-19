@@ -23,8 +23,8 @@ export class AuthGuard implements CanActivate {
   }
 
   protected async checkSession(subject: Subject<boolean>, route: ActivatedRouteSnapshot): Promise<void> {
-    const hasSession = await this.kratos.hasSession();
-    if (!hasSession
+    const hasIdentity = await this.kratos.hasIdentity();
+    if (!hasIdentity
       && (route.routeConfig?.path !== 'login' && route.routeConfig?.path !== 'registration')) {
       console.log('route to login');
       this.router.navigate(['/login']);
@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
       return;
     }
 
-    if (hasSession
+    if (hasIdentity
       && (route.routeConfig?.path === 'login'
         || route.routeConfig?.path === 'registration')) {
       this.router.navigate(['/dashboard']);

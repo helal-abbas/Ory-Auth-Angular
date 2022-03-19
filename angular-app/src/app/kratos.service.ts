@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Configuration, SelfServiceLoginFlow, SelfServiceRegistrationFlow, V0alpha2Api } from '@ory/kratos-client';
+import { Configuration, Identity, SelfServiceLoginFlow, SelfServiceRegistrationFlow, V0alpha2Api } from '@ory/kratos-client';
 import { environment } from './../environments/environment';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class KratosService {
   protected loginFlow!: SelfServiceLoginFlow;
   protected registrationFlow!: SelfServiceRegistrationFlow;
 
-  protected sessionToken!: string;
+  protected identity!: Identity;
 
   constructor(
     protected httpClient: HttpClient,
@@ -29,7 +29,7 @@ export class KratosService {
 
   public async initLoginFlow(): Promise<void> {
     this.loginFlow = (await this.ory.initializeSelfServiceLoginFlowForBrowsers(
-      false,
+      true,
       undefined,
       undefined,
     )).data;
@@ -58,7 +58,7 @@ export class KratosService {
       body
     );
 
-    return response.status === 200;;
+    return response.status === 200;
   }
 
   public async registration(passwordIdentifier: string, password: string): Promise<boolean> {
@@ -88,14 +88,12 @@ export class KratosService {
     return logoutResponse.status === 204;
   }
 
-  public async hasSession(): Promise<boolean> {
+  public async hasIdentity(): Promise<boolean> {
     try {
       const response = await this.ory.toSession();
-      this.sessionToken = response.data.identity.id;
-      const hasSession = response.status === 200 && !!response.data.active;
+      this.identity = response.data.identity;
 
-      console.log(hasSession);
-      return hasSession;
+      return response.status === 200 && !!response.data.active;
     } catch (err) {
       return false;
     }

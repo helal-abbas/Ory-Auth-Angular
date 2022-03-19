@@ -1,14 +1,14 @@
 version: '3.7'
 
 services:
-  web:
-    image: nginx:1
-    restart: unless-stopped
-    ports:
-      - 4200:80
-    volumes:
-      - "./../angular-app/dist/angular-app:/usr/share/nginx/html"
-      - "./default.conf:/etc/nginx/conf.d/default.conf"
+  # web:
+  #   image: nginx:1
+  #   restart: unless-stopped
+  #   ports:
+  #     - 4200:80
+  #   volumes:
+  #     - "./../angular-app/dist/angular-app:/usr/share/nginx/html"
+  #     - "./default.conf:/etc/nginx/conf.d/default.conf"
 
   kratos-migrate:
     image: oryd/kratos:v0.8.0-alpha.3-sqlite
