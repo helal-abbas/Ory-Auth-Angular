@@ -23,6 +23,8 @@ export class RegistrationComponent implements OnInit {
       firstName: new FormControl('', [Validators.required]),
       lastName: new FormControl('', [Validators.required]),
       companyName: new FormControl('', [Validators.required]),
+      phoneNumber: new FormControl('', [Validators.required]),
+      userId: new FormControl('', [Validators.required])
     });
   }
 
@@ -35,7 +37,7 @@ export class RegistrationComponent implements OnInit {
   }
 
   async onRegister(): Promise<void> {
-    if (await this.kratos.registration(this.registrationForm.value.username, this.registrationForm.value.password, this.registrationForm.value.firstName, this.registrationForm.value.lastName, this.registrationForm.value.companyName)) {
+    if (await this.kratos.registration(this.registrationForm.value.username, this.registrationForm.value.password, this.registrationForm.value.firstName, this.registrationForm.value.lastName, this.registrationForm.value.companyName, this.registrationForm.value.phoneNumber, this.registrationForm.value.userId)) {
       this.router.navigate(['/dashboard']);
     }
   }

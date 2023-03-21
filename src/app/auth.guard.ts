@@ -24,6 +24,7 @@ export class AuthGuard implements CanActivate {
 
   protected async checkSession(subject: Subject<boolean>, route: ActivatedRouteSnapshot): Promise<void> {
     const hasIdentity = await this.kratos.hasIdentity();
+    
     if (!hasIdentity
       && (route.routeConfig?.path !== 'login' && route.routeConfig?.path !== 'registration')) {
       console.log('route to login');

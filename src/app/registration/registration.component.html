@@ -1,8 +1,10 @@
 <form [formGroup]="registrationForm">
     <input class="entry" formControlName="username" placeholder="Email Id" />
+    <input class="entry" formControlName="userId" placeholder="User Id" />
     <input class="entry" formControlName="firstName" placeholder="FirstName" />
     <input class="entry" formControlName="lastName" placeholder="LastName" />
     <input class="entry" formControlName="companyName" placeholder="Company Name" />
+    <input class="entry" formControlName="phoneNumber" placeholder="Phone Number" />
     <input class="entry" formControlName="password" placeholder="Password" type="password" />
     <input class="entry" formControlName="passwordAgain" placeholder="Password again" type="password" />
     <button class="entry" (click)="onRegister()">Register</button>

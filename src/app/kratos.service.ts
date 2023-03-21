@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Configuration, Identity, SelfServiceLoginFlow, SelfServiceRegistrationFlow, V0alpha2Api } from '@ory/kratos-client';
 import { environment } from './../environments/environment';
 import axios from 'axios';
+import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
@@ -17,6 +18,7 @@ export class KratosService {
 
   constructor(
     protected httpClient: HttpClient,
+    protected router: Router,
   ) {
     const configuration = new Configuration({
       basePath: environment.basePath,
@@ -34,6 +36,9 @@ export class KratosService {
       undefined,
       undefined,
     )).data;
+    this.router.navigate([`/login`],
+    { queryParams: { flow: this.loginFlow.id } }
+    );
   }
 
   public async initRegistrationFlow(): Promise<void> {
@@ -42,9 +47,13 @@ export class KratosService {
     this.response = await axios.get('http://127.0.0.1:4433/self-service/registration/browser', {
       withCredentials: true
     })
-    console.log("Closed Initiation", this.response )
+    console.log("Closed Initiation", `/registration?flow=${this.response.data.id}` )
     console.log(this.response.data.ui.nodes[0].attributes.value)
-    // window.location.href = this.response.data.ui.action
+   
+    this.router.navigate([`/registration`],
+    { queryParams: { flow: this.response.data.id } }
+    );
+   
     return
   }
 
@@ -82,7 +91,7 @@ export class KratosService {
     return response.status === 200;
   }
 
-  public async registration(passwordIdentifier: string, password: string, firstName: string, lastName: string, companyName: string): Promise<boolean> {
+  public async registration(passwordIdentifier: string, password: string, firstName: string, lastName: string, companyName: string, phoneNumber: string,userName: string): Promise<boolean> {
     let body: any = {};
 
     for (const node of this.response?.data.ui?.nodes as any[]) {
@@ -95,7 +104,7 @@ export class KratosService {
       }
     }
    
-    body = {...body, "traits.name.first":firstName ,'traits.name.last': lastName, 'traits.corporate.companyName': companyName }
+    body = {...body, "traits.name.first":firstName ,'traits.name.last': lastName, 'traits.corporate.companyName': companyName, 'traits.username': userName, 'traits.phoneNumber.phoneNumber': phoneNumber }
     
     // const response = await this.ory.submitSelfServiceRegistrationFlow(
     //   this.registrationFlow.id,
