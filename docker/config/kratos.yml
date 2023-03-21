@@ -8,7 +8,7 @@ serve:
     cors:
       enabled: true
       allowed_origins:
-        - http://127.0.0.1:4200
+        - http://localhost:4200
       allowed_methods:
         - POST
         - GET
@@ -19,9 +19,12 @@ serve:
         - Authorization
         - Cookie
         - Content-Type
+        - X-CSRF-Token
       exposed_headers:
         - Content-Type
         - Set-Cookie
+      allow_credentials: true
+
   admin:
     base_url: http://kratos:4434/
 

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Configuration, Identity, SelfServiceLoginFlow, SelfServiceRegistrationFlow, V0alpha2Api } from '@ory/kratos-client';
 import { environment } from './../environments/environment';
-
+import axios from 'axios';
 @Injectable({
   providedIn: 'root'
 })
@@ -13,6 +13,7 @@ export class KratosService {
   protected registrationFlow!: SelfServiceRegistrationFlow;
 
   protected identity!: Identity;
+  public response!: any;
 
   constructor(
     protected httpClient: HttpClient,
@@ -36,12 +37,22 @@ export class KratosService {
   }
 
   public async initRegistrationFlow(): Promise<void> {
-    this.registrationFlow = (await this.ory.initializeSelfServiceRegistrationFlowForBrowsers(undefined)).data;
+    console.log("Initiated for registration")
+    // this.registrationFlow = (await this.ory.initializeSelfServiceRegistrationFlowForBrowsers(undefined)).data;
+    this.response = await axios.get('http://127.0.0.1:4433/self-service/registration/browser', {
+      withCredentials: true
+    })
+    console.log("Closed Initiation", this.response )
+    console.log(this.response.data.ui.nodes[0].attributes.value)
   }
 
   public async login(passwordIdentifier: string, password: string): Promise<boolean> {
-    const body: any = {};
+    let body: any = {};
+    console.log('-------------------------------------------------')
+    console.log(passwordIdentifier)
 
+    console.log('-------------------------------------------------')
+    console.log(password)
     for (const node of this.loginFlow.ui.nodes as any[]) {
       if (node.attributes['name'] === 'password_identifier') {
         body['password_identifier'] = passwordIdentifier;
@@ -51,20 +62,28 @@ export class KratosService {
         body[node.attributes['name']] = node.attributes['value'];
       }
     }
-
+    
+    body = { ...body, password_identifier: passwordIdentifier}
+    console.log(body)
+    const param = {
+      csrf_token: body.csrf_token,
+      method: 'password',
+      password: body.password,
+      password_identifier: body.password_identifier
+    }
     const response = await this.ory.submitSelfServiceLoginFlow(
       this.loginFlow.id,
       undefined,
-      body
+      param
     );
 
     return response.status === 200;
   }
 
-  public async registration(passwordIdentifier: string, password: string): Promise<boolean> {
-    const body: any = {};
+  public async registration(passwordIdentifier: string, password: string, firstName: string, lastName: string): Promise<boolean> {
+    let body: any = {};
 
-    for (const node of this.registrationFlow.ui.nodes as any[]) {
+    for (const node of this.response?.data.ui?.nodes as any[]) {
       if (node.attributes['name'] === 'traits.email') {
         body['traits.email'] = passwordIdentifier;
       } else if (node.attributes['name'] === 'password') {
@@ -73,13 +92,30 @@ export class KratosService {
         body[node.attributes['name']] = node.attributes['value'];
       }
     }
+    console.log(lastName,"firstName and lassTanme",firstName)
+    
+   
+    body = {...body, "traits.name.first":firstName ,'traits.name.last': lastName}
+    
+    // const response = await this.ory.submitSelfServiceRegistrationFlow(
+    //   this.registrationFlow.id,
+    //   body,
+    // );
+    const response =await axios.post(`http://127.0.0.1:4433/self-service/registration?flow=${this.response.data.id}`,
+    body,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },}
+        ).then((res: any) => {
+          console.log(res)
+          }).catch((error: any) => {
+            console.log(error)
+          });
+          
 
-    const response = await this.ory.submitSelfServiceRegistrationFlow(
-      this.registrationFlow.id,
-      body,
-    );
-
-    return response.status === 200;
+    return false
   }
 
   public async logout(): Promise<boolean> {
