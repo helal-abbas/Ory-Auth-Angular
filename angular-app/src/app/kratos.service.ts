@@ -101,7 +101,7 @@ export class KratosService {
     //   this.registrationFlow.id,
     //   body,
     // );
-    const response =await axios.post(`http://127.0.0.1:4433/self-service/registration?flow=${this.response.data.id}`,
+    const response : any=await axios.post(`http://127.0.0.1:4433/self-service/registration?flow=${this.response.data.id}`,
     body,
       {
         withCredentials: true,
@@ -114,8 +114,8 @@ export class KratosService {
             console.log(error)
           });
           
-
-    return false
+          console.log("respons edata",response.data.status)
+    return response.data.status === 200
   }
 
   public async logout(): Promise<boolean> {
