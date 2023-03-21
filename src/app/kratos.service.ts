@@ -44,6 +44,8 @@ export class KratosService {
     })
     console.log("Closed Initiation", this.response )
     console.log(this.response.data.ui.nodes[0].attributes.value)
+    // window.location.href = this.response.data.ui.action
+    return
   }
 
   public async login(passwordIdentifier: string, password: string): Promise<boolean> {
@@ -80,7 +82,7 @@ export class KratosService {
     return response.status === 200;
   }
 
-  public async registration(passwordIdentifier: string, password: string, firstName: string, lastName: string): Promise<boolean> {
+  public async registration(passwordIdentifier: string, password: string, firstName: string, lastName: string, companyName: string): Promise<boolean> {
     let body: any = {};
 
     for (const node of this.response?.data.ui?.nodes as any[]) {
@@ -92,10 +94,8 @@ export class KratosService {
         body[node.attributes['name']] = node.attributes['value'];
       }
     }
-    console.log(lastName,"firstName and lassTanme",firstName)
-    
    
-    body = {...body, "traits.name.first":firstName ,'traits.name.last': lastName}
+    body = {...body, "traits.name.first":firstName ,'traits.name.last': lastName, 'traits.corporate.companyName': companyName }
     
     // const response = await this.ory.submitSelfServiceRegistrationFlow(
     //   this.registrationFlow.id,
@@ -109,13 +109,14 @@ export class KratosService {
           "Content-Type": "application/json",
         },}
         ).then((res: any) => {
-          console.log(res)
+          // console.log(res)
+          return res
           }).catch((error: any) => {
             console.log(error)
           });
           
-          console.log("respons edata",response.data.status)
-    return response.data.status === 200
+          console.log("respons edata",response)
+    return response.status === 200
   }
 
   public async logout(): Promise<boolean> {
