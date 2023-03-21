@@ -1,3 +1,4 @@
+ory/kratos sdk for javascript/typescript/angular
 # AngularApp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.1.
