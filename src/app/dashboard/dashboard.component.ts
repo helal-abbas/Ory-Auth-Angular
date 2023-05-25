@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { KratosService } from './../kratos.service';
+import  axios  from 'axios'
 
 @Component({
   selector: 'app-dashboard',
@@ -23,4 +24,12 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  async onWhoAmI() : Promise<void> {
+    const response = await axios.get('http://127.0.0.1:4433/sessions/whoami')
+      .then((res) => {
+        return res.data;
+      }).catch((error) => {
+        throw Error('Unauthorised');
+      })
+  }
 }
