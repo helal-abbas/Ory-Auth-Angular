@@ -31,5 +31,6 @@ export class DashboardComponent implements OnInit {
       }).catch((error) => {
         throw Error('Unauthorised');
       });
+      
   }
 }
