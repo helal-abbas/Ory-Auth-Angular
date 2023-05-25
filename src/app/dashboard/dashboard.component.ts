@@ -30,6 +30,7 @@ export class DashboardComponent implements OnInit {
         return res.data;
       }).catch((error) => {
         throw Error('Unauthorised');
-      })
+      });
+      
   }
 }
